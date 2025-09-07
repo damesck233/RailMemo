@@ -1,8 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { Button, Group, Paper, Title, Text, Alert, Loader } from '@mantine/core';
+import { IconPlus, IconPhoto, IconFileTypePdf, IconInfoCircle } from '@tabler/icons-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import JSZip from 'jszip';
 import { TicketFormData } from '@/types/ticket';
 import { processTemplate, getTemplateHTML } from '@/lib/templateProcessor';
 
@@ -13,10 +16,129 @@ interface ActionButtonsProps {
 
 export default function ActionButtons({ onGenerate, ticketQueue }: ActionButtonsProps) {
   const [isExporting, setIsExporting] = useState(false);
+  const [isExportingImages, setIsExportingImages] = useState(false);
 
 
 
 
+
+  const handleExportImages = async () => {
+    try {
+      setIsExportingImages(true);
+      
+      if (ticketQueue.length === 0) {
+        alert('候补列表为空，请先生成车票');
+        return;
+      }
+
+      // 获取模板HTML
+      const templateHTML = await getTemplateHTML();
+      
+      // 创建临时容器用于渲染车票
+      const tempContainer = document.createElement('div');
+      tempContainer.style.position = 'absolute';
+      tempContainer.style.left = '-9999px';
+      tempContainer.style.top = '-9999px';
+      tempContainer.style.width = '1810px';
+      tempContainer.style.height = '1140px';
+      document.body.appendChild(tempContainer);
+
+      try {
+        if (ticketQueue.length === 1) {
+          // 单张车票直接下载PNG
+          const ticket = ticketQueue[0];
+          const processedHTML = processTemplate(templateHTML, ticket);
+          tempContainer.innerHTML = processedHTML;
+
+          // 等待DOM渲染完成
+          await new Promise(resolve => setTimeout(resolve, 200));
+
+          // 生成canvas
+          const canvas = await html2canvas(tempContainer, {
+            scale: 1,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            width: 1810,
+            height: 1140,
+            logging: false,
+            onclone: (clonedDoc) => {
+              const elements = clonedDoc.querySelectorAll('*');
+              elements.forEach(el => {
+                const style = window.getComputedStyle(el);
+                if (style.backgroundImage && style.backgroundImage !== 'none') {
+                  (el as HTMLElement).style.backgroundImage = style.backgroundImage;
+                }
+              });
+            }
+          });
+
+          // 下载单张图片
+          const link = document.createElement('a');
+          link.download = `火车票_${ticket.trainNumber}_${ticket.departureStation}到${ticket.arrivalStation}.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        } else {
+          // 多张车票打包成ZIP
+          const zip = new JSZip();
+          
+          for (let i = 0; i < ticketQueue.length; i++) {
+            const ticket = ticketQueue[i];
+            const processedHTML = processTemplate(templateHTML, ticket);
+            tempContainer.innerHTML = processedHTML;
+
+            // 等待DOM渲染完成
+            await new Promise(resolve => setTimeout(resolve, 200));
+
+            // 生成canvas
+            const canvas = await html2canvas(tempContainer, {
+              scale: 1,
+              useCORS: true,
+              allowTaint: true,
+              backgroundColor: '#ffffff',
+              width: 1810,
+              height: 1140,
+              logging: false,
+              onclone: (clonedDoc) => {
+                const elements = clonedDoc.querySelectorAll('*');
+                elements.forEach(el => {
+                  const style = window.getComputedStyle(el);
+                  if (style.backgroundImage && style.backgroundImage !== 'none') {
+                    (el as HTMLElement).style.backgroundImage = style.backgroundImage;
+                  }
+                });
+              }
+            });
+
+            // 将图片添加到ZIP
+            const imgData = canvas.toDataURL('image/png').split(',')[1]; // 移除data:image/png;base64,前缀
+            const fileName = `火车票_${i + 1}_${ticket.trainNumber}_${ticket.departureStation}到${ticket.arrivalStation}.png`;
+            zip.file(fileName, imgData, { base64: true });
+          }
+
+          // 生成并下载ZIP文件
+          const zipBlob = await zip.generateAsync({ type: 'blob' });
+          const link = document.createElement('a');
+          const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+          link.download = `火车票批量_${ticketQueue.length}张_${timestamp}.zip`;
+          link.href = URL.createObjectURL(zipBlob);
+          link.click();
+          
+          // 清理URL对象
+          setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+        }
+      } finally {
+        // 清理临时容器
+        document.body.removeChild(tempContainer);
+      }
+      
+    } catch (error) {
+      console.error('导出图片失败:', error);
+      alert('导出图片失败，请重试');
+    } finally {
+      setIsExportingImages(false);
+    }
+  };
 
   const handleExportPDF = async () => {
     try {
@@ -130,46 +252,63 @@ export default function ActionButtons({ onGenerate, ticketQueue }: ActionButtons
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold text-gray-800 tracking-tight">操作区域</h2>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <Title order={2} c="dark.8">操作区域</Title>
       
-      <div className="space-y-3">
-        <button
+      <Group grow>
+        <Button
           onClick={onGenerate}
-          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center space-x-2 text-sm"
+          leftSection={<IconPlus size={16} />}
+          variant="gradient"
+          gradient={{ from: 'blue', to: 'cyan' }}
+          radius="md"
+          size="md"
+          fullWidth
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          <span>生成车票</span>
-        </button>
+          生成车票
+        </Button>
+      </Group>
 
-        <button
+      <Group grow>
+        <Button
+          onClick={handleExportImages}
+          disabled={isExportingImages || ticketQueue.length === 0}
+          leftSection={isExportingImages ? <Loader size={16} color="white" /> : <IconPhoto size={16} />}
+          variant="gradient"
+          gradient={{ from: 'violet', to: 'purple' }}
+          radius="md"
+          size="md"
+          fullWidth
+        >
+          {isExportingImages ? '导出中...' : `导出图片 (${ticketQueue.length})`}
+        </Button>
+      </Group>
+
+      <Group grow>
+        <Button
           onClick={handleExportPDF}
           disabled={isExporting || ticketQueue.length === 0}
-          className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:hover:scale-100 transition-all duration-200 flex items-center justify-center space-x-2 text-sm"
+          leftSection={isExporting ? <Loader size={16} color="white" /> : <IconFileTypePdf size={16} />}
+          variant="gradient"
+          gradient={{ from: 'teal', to: 'green' }}
+          radius="md"
+          size="md"
+          fullWidth
         >
-          {isExporting ? (
-            <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              <span>导出中...</span>
-            </>
-          ) : (
-            <>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <span>导出PDF ({ticketQueue.length})</span>
-            </>
-          )}
-        </button>
-      </div>
+          {isExporting ? '导出中...' : `导出PDF (${ticketQueue.length})`}
+        </Button>
+      </Group>
 
-      <div className="bg-blue-50/80 border border-blue-200/50 rounded-xl p-3 backdrop-blur-sm">
-        <p className="text-xs text-blue-800 font-medium leading-relaxed">
-          <strong>使用说明：</strong>填写车票信息后点击"生成车票"添加到候补列表，可生成多张车票，最后点击"导出PDF"一次性导出所有车票。
-        </p>
-      </div>
+      <Alert
+        icon={<IconInfoCircle size={16} />}
+        title="使用说明"
+        color="blue"
+        radius="md"
+      >
+        <Text size="xs">
+          填写车票信息后点击"生成车票"添加到候补列表，可生成多张车票。支持导出图片（单张PNG或多张ZIP）和PDF格式。
+        </Text>
+      </Alert>
     </div>
   );
 }

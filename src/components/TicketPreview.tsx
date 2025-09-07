@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Paper, Text, Loader, Alert, Center } from '@mantine/core';
+import { IconAlertTriangle } from '@tabler/icons-react';
 import { TicketData } from '@/types/ticket';
 import { processTemplate, getTemplateHTML } from '@/lib/templateProcessor';
 
@@ -35,45 +37,54 @@ export default function TicketPreview({ ticketData }: TicketPreviewProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64 sm:h-80">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 text-base font-medium">正在加载模板...</p>
+      <Center h={320}>
+        <div style={{ textAlign: 'center' }}>
+          <Loader size="lg" color="blue" mb="md" />
+          <Text c="dimmed" fw={500}>正在加载模板...</Text>
         </div>
-      </div>
-  );
-}
+      </Center>
+    );
+  }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-64 sm:h-80">
-        <div className="text-center">
-          <div className="text-red-400 text-2xl mb-4">⚠️</div>
-          <p className="text-red-600 text-base font-medium">{error}</p>
-        </div>
-      </div>
+      <Center h={320}>
+        <Alert
+          icon={<IconAlertTriangle size={16} />}
+          title="加载失败"
+          color="red"
+          radius="md"
+        >
+          <Text size="sm">{error}</Text>
+        </Alert>
+      </Center>
     );
   }
 
   return (
-    <div 
-      className="bg-white/60 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden mx-auto"
+    <Paper
+      shadow="md"
+      radius="md"
+      withBorder
       style={{
         width: 'calc(1810px * 0.15)',
         height: 'calc(1140px * 0.15)',
-        display: 'inline-block'
+        display: 'inline-block',
+        overflow: 'hidden',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        border: '1px solid #e9ecef'
       }}
     >
       <div 
-        className="origin-center transition-all duration-300"
         style={{ 
           transform: 'scale(0.15)', 
           transformOrigin: 'top left', 
           lineHeight: 0,
-          display: 'block'
+          display: 'block',
+          transition: 'all 300ms ease'
         }}
         dangerouslySetInnerHTML={{ __html: processedHTML }}
       />
-    </div>
+    </Paper>
   );
 }

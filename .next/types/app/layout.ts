@@ -1,4 +1,4 @@
-// File: /root/railway.damesck.net/src/app/layout.tsx
+// File: /Users/damesck/100 - Code/110 - Projects/111 - 前端/RailMemo/src/app/layout.tsx
 import * as entry from '../../../src/app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

@@ -1,0 +1,32 @@
+/*!**********************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./src/components/FooterSocial.module.css ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************/
+.FooterSocial_footer__ry1QC {
+  padding-top: var(--mantine-spacing-xl);
+  padding-bottom: var(--mantine-spacing-xl);
+  background-color: var(--mantine-color-gray-0);
+  border-top: 1px solid var(--mantine-color-gray-2);
+}
+
+.FooterSocial_inner__O7Dw_ {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--mantine-spacing-md);
+}
+
+.FooterSocial_links__viJHT {
+  display: flex;
+  gap: var(--mantine-spacing-xs);
+  margin-left: auto;
+  padding-left: var(--mantine-spacing-lg);
+}
+
+@media (max-width: 768px) {
+  .FooterSocial_inner__O7Dw_ {
+    flex-direction: column;
+    gap: var(--mantine-spacing-md);
+  }
+}

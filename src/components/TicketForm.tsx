@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { TextInput, Select, Paper, Title, Grid, Alert } from '@mantine/core';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { TicketFormData } from '@/types/ticket';
 
 interface TicketFormProps {
@@ -31,77 +33,60 @@ export default function TicketForm({ onDataChange, initialData }: TicketFormProp
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-xl p-4 sm:p-6 rounded-2xl shadow-xl border border-gray-200/50">
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-800 tracking-tight">火车票信息填写</h2>
+    <Paper shadow="md" p="xl" radius="md" style={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #e9ecef' }}>
+      <Title order={2} mb="xl" c="dark.8">火车票信息填写</Title>
       
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* 票号 */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-2">
-              票号
-            </label>
-            <input
-              type="text"
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <Grid>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
+            <TextInput
+              label="票号"
               value={formData.ticketNumber}
               onChange={(e) => handleInputChange('ticketNumber', e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-200 font-medium placeholder-gray-400"
               placeholder="请输入票号"
+              radius="md"
+              size="sm"
             />
-          </div>
-
-          {/* 车次 */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-2">
-              车次
-            </label>
-            <input
-              type="text"
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
+            <TextInput
+              label="车次"
               value={formData.trainNumber}
               onChange={(e) => handleInputChange('trainNumber', e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-200 font-medium placeholder-gray-400"
               placeholder="如：G1"
+              radius="md"
+              size="sm"
             />
-          </div>
-        </div>
+          </Grid.Col>
+        </Grid>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* 出发站 */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-2">
-              出发站
-            </label>
-            <input
-              type="text"
+        <Grid>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
+            <TextInput
+              label="出发站"
               value={formData.departureStation}
               onChange={(e) => handleInputChange('departureStation', e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-200 font-medium placeholder-gray-400"
               placeholder="如：北京南"
+              radius="md"
+              size="sm"
             />
-          </div>
-
-          {/* 到达站 */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-2">
-              到达站
-            </label>
-            <input
-              type="text"
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
+            <TextInput
+              label="到达站"
               value={formData.arrivalStation}
               onChange={(e) => handleInputChange('arrivalStation', e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-200 font-medium placeholder-gray-400"
               placeholder="如：上海虹桥"
+              radius="md"
+              size="sm"
             />
-          </div>
-        </div>
+          </Grid.Col>
+        </Grid>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* 日期 */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-2">
-              日期
-            </label>
-            <input
+        <Grid>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
+            <TextInput
+              label="日期"
               type="date"
               value={dateInputValue}
               onChange={(e) => {
@@ -115,124 +100,105 @@ export default function TicketForm({ onDataChange, initialData }: TicketFormProp
                   handleInputChange('date', '');
                 }
               }}
-              className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-200 font-medium"
+              radius="md"
+              size="sm"
             />
-          </div>
-
-          {/* 发车时间 */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-2">
-              发车时间
-            </label>
-            <input
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
+            <TextInput
+              label="发车时间"
               type="time"
               value={formData.departureTime}
               onChange={(e) => handleInputChange('departureTime', e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-200 font-medium"
+              radius="md"
+              size="sm"
             />
-          </div>
-        </div>
+          </Grid.Col>
+        </Grid>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* 车厢号 */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-2">
-              车厢号
-            </label>
-            <input
-              type="text"
+        <Grid>
+          <Grid.Col span={{ base: 12, sm: 4 }}>
+            <TextInput
+              label="车厢号"
               value={formData.carNumber}
               onChange={(e) => handleInputChange('carNumber', e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-200 font-medium placeholder-gray-400"
               placeholder="如：01"
+              radius="md"
+              size="sm"
             />
-          </div>
-
-          {/* 座位号 */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-2">
-              座位号
-            </label>
-            <input
-              type="text"
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, sm: 4 }}>
+            <TextInput
+              label="座位号"
               value={formData.seatNumber}
               onChange={(e) => handleInputChange('seatNumber', e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-200 font-medium placeholder-gray-400"
               placeholder="如：01A"
+              radius="md"
+              size="sm"
             />
-          </div>
-
-          {/* 座位席别 */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-2">
-              座位席别
-            </label>
-            <select
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, sm: 4 }}>
+            <Select
+              label="座位席别"
               value={formData.seatType}
-              onChange={(e) => handleInputChange('seatType', e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-200 font-medium"
-            >
-              <option value="二等座">二等座</option>
-              <option value="一等座">一等座</option>
-              <option value="商务座">商务座</option>
-              <option value="硬座">硬座</option>
-              <option value="硬卧">硬卧</option>
-              <option value="软卧">软卧</option>
-            </select>
-          </div>
-        </div>
+              onChange={(value) => handleInputChange('seatType', value || '')}
+              data={[
+                { value: '二等座', label: '二等座' },
+                { value: '一等座', label: '一等座' },
+                { value: '商务座', label: '商务座' },
+                { value: '硬座', label: '硬座' },
+                { value: '硬卧', label: '硬卧' },
+                { value: '软卧', label: '软卧' }
+              ]}
+              radius="md"
+              size="sm"
+            />
+          </Grid.Col>
+        </Grid>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* 票价 */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-2">
-              票价（元）
-            </label>
-            <input
-              type="text"
+        <Grid>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
+            <TextInput
+              label="票价（元）"
               value={formData.price}
               onChange={(e) => handleInputChange('price', e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-200 font-medium placeholder-gray-400"
               placeholder="如：553.0"
+              radius="md"
+              size="sm"
             />
-          </div>
-
-          {/* 乘客姓名 */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-2">
-              乘客姓名
-            </label>
-            <input
-              type="text"
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
+            <TextInput
+              label="乘客姓名"
               value={formData.passengerName}
               onChange={(e) => handleInputChange('passengerName', e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-200 font-medium placeholder-gray-400"
               placeholder="请输入乘客姓名"
+              radius="md"
+              size="sm"
             />
-          </div>
-        </div>
+          </Grid.Col>
+        </Grid>
 
-        {/* 身份证号 */}
-        <div>
-          <label className="block text-xs font-semibold text-gray-700 mb-2">
-            身份证号
-          </label>
-          <input
-            type="text"
-            value={formData.idNumber}
-            onChange={(e) => handleInputChange('idNumber', e.target.value)}
-            className="w-full px-3 py-2 text-sm bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-200 font-medium placeholder-gray-400"
-            placeholder="请输入身份证号"
-            maxLength={18}
-          />
-        </div>
+        <TextInput
+          label="身份证号"
+          value={formData.idNumber}
+          onChange={(e) => handleInputChange('idNumber', e.target.value)}
+          placeholder="请输入身份证号"
+          maxLength={18}
+          radius="md"
+          size="sm"
+        />
       </div>
 
-      <div className="mt-6 p-3 bg-amber-50/80 border border-amber-200/50 rounded-xl backdrop-blur-sm">
-        <p className="text-xs text-amber-800 font-medium">
-          <strong>提示：</strong>此工具仅用于生成纪念性火车票，不可用于实际乘车或报销。
-        </p>
-      </div>
-    </div>
+      <Alert
+        icon={<IconInfoCircle size={16} />}
+        title="提示"
+        color="yellow"
+        mt="xl"
+        radius="md"
+      >
+        此工具仅用于生成纪念性火车票，不可用于实际乘车或报销。
+      </Alert>
+    </Paper>
   );
 }
