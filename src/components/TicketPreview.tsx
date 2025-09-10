@@ -1,16 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Paper, Text, Loader, Alert, Center } from '@mantine/core';
+import { Text, Loader, Alert, Center } from '@mantine/core';
 import { IconAlertTriangle } from '@tabler/icons-react';
-import { TicketData } from '@/types/ticket';
-import { processTemplate, getTemplateHTML } from '@/lib/templateProcessor';
+import { TicketFormData } from '@/types/ticket';
+import { processTemplate, getTemplateHTML, getDefaultTemplateId } from '@/lib/templateProcessor';
 
 interface TicketPreviewProps {
-  ticketData: TicketData;
+  ticketData: TicketFormData & { templateId?: string };
+  onTemplateChange?: (templateId: string) => void;
 }
 
-export default function TicketPreview({ ticketData }: TicketPreviewProps) {
+export default function TicketPreview({ ticketData, onTemplateChange }: TicketPreviewProps) {
   const [processedHTML, setProcessedHTML] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -21,8 +22,8 @@ export default function TicketPreview({ ticketData }: TicketPreviewProps) {
         setLoading(true);
         setError('');
 
-        const templateHTML = await getTemplateHTML();
-        const processed = processTemplate(templateHTML, ticketData);
+        const templateHTML = await getTemplateHTML(ticketData.templateId);
+         const processed = processTemplate(templateHTML, ticketData, ticketData.templateId);
         setProcessedHTML(processed);
       } catch (err) {
         console.error('Error processing template:', err);
@@ -61,30 +62,33 @@ export default function TicketPreview({ ticketData }: TicketPreviewProps) {
     );
   }
 
+
+
   return (
-    <Paper
-      shadow="md"
-      radius="md"
-      withBorder
-      style={{
-        width: 'calc(1810px * 0.15)',
-        height: 'calc(1140px * 0.15)',
-        display: 'inline-block',
-        overflow: 'hidden',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        border: '1px solid #e9ecef'
-      }}
-    >
-      <div 
-        style={{ 
-          transform: 'scale(0.15)', 
-          transformOrigin: 'top left', 
-          lineHeight: 0,
-          display: 'block',
-          transition: 'all 300ms ease'
+    <div style={{ width: '100%', height: '100%' }}>
+
+      <div
+        style={{
+          width: 'calc(1810px * 0.15)',
+          height: 'calc(1140px * 0.15)',
+          display: 'inline-block',
+          overflow: 'hidden',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '8px',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
         }}
-        dangerouslySetInnerHTML={{ __html: processedHTML }}
-      />
-    </Paper>
+      >
+        <div
+          style={{
+            transform: 'scale(0.15)',
+            transformOrigin: 'top left',
+            lineHeight: 0,
+            display: 'block',
+            transition: 'all 300ms ease'
+          }}
+          dangerouslySetInnerHTML={{ __html: processedHTML }}
+        />
+      </div>
+    </div>
   );
 }

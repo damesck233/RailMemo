@@ -4,13 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>火车票样式</title>
+  <title>cr400bf-z</title>
   <style>
     body {
       margin: 0;
       background-color: #f5f5f5;
       font-family: 'Arial', sans-serif;
-      padding: 0px;
     }
 
     .ticket-container {
@@ -29,7 +28,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: url('https://nb-data.klpbbs.com/file/tc/2025/09/06/68bbee3152c47_1757146673.png') no-repeat center center;
+      background: url('./background.png') no-repeat center center;
       background-size: cover;
       background-color: #CDD5DE;
       opacity: 0.74;
@@ -45,48 +44,58 @@
       font-family: 'Alibaba PuHuiTi 3 55 Regular', Arial, sans-serif;
     }
 
-    .departure-station {
+    .departure-container {
       position: absolute;
       left: 280px;
       top: 190px;
+      display: flex;
+      align-items: center;
+      height: 120px;
+    }
+
+    .departure-station {
       font-size: 100px;
       line-height: 120px;
       color: #000000;
       font-family: 'OPPOSans-Medium', Arial, sans-serif;
       font-weight: 500;
+      white-space: nowrap;
     }
 
     .departure-char {
-      position: absolute;
-      left: 500px;
-      top: 200px;
       font-size: 80px;
       line-height: 100px;
       color: #000000;
       font-family: 'OPPOSans-Medium', Arial, sans-serif;
       font-weight: 500;
+      margin-left: 10px;
+    }
+
+    .arrival-container {
+      position: absolute;
+      right: 380px;
+      top: 190px;
+      display: flex;
+      align-items: center;
+      height: 120px;
     }
 
     .arrival-station {
-      position: absolute;
-      left: 1230px;
-      top: 190px;
       font-size: 100px;
       line-height: 120px;
       color: #000000;
       font-family: 'OPPOSans-Medium', Arial, sans-serif;
       font-weight: 500;
+      white-space: nowrap;
     }
 
     .arrival-char {
-      position: absolute;
-      left: 1450px;
-      top: 200px;
       font-size: 80px;
       line-height: 100px;
       color: #000000;
       font-family: 'OPPOSans-Medium', Arial, sans-serif;
       font-weight: 500;
+      margin-left: 10px;
     }
 
     .train-line {
@@ -100,12 +109,14 @@
 
     .train-number {
       position: absolute;
-      left: 850px;
+      left: 50%;
       top: 220px;
+      transform: translateX(-50%);
       font-size: 60px;
       line-height: 70px;
       color: #000000;
       font-family: 'Alibaba PuHuiTi 3 55 Regular', Arial, sans-serif;
+      text-align: center;
     }
 
     .departure-label {
@@ -171,9 +182,9 @@
     .price-unit {
       position: absolute;
       left: 250px;
-      top: 530px;
-      font-size: 30px;
-      line-height: 40px;
+      top: 510px;
+      font-size: 50px;
+      line-height: 60px;
       color: #000000;
       font-family: 'Alibaba PuHuiTi 3 55 Regular', Arial, sans-serif;
     }
@@ -274,7 +285,7 @@
       top: 800px;
       width: 200px;
       height: 200px;
-      background: url('https://nb-data.klpbbs.com/file/tc/2025/09/06/68bbef939ae33_1757147027.png') no-repeat center center;
+      background: url('./qrcode.png') no-repeat center center;
       background-size: contain;
       border: 2px solid #ccc;
     }
@@ -296,36 +307,40 @@
   <div class="ticket-container">
     <div class="background-pattern"></div>
 
-    <div class="ticket-number">票号</div>
+    <div class="ticket-number">{{ticketNumber}}</div>
 
-    <div class="departure-station">出发</div>
-    <div class="departure-char">站</div>
+    <div class="departure-container">
+      <div class="departure-station">{{departureStation}}</div>
+      <div class="departure-char">站</div>
+    </div>
 
-    <div class="arrival-station">到达</div>
-    <div class="arrival-char">站</div>
+    <div class="arrival-container">
+      <div class="arrival-station">{{arrivalStation}}</div>
+      <div class="arrival-char">站</div>
+    </div>
 
     <div class="train-line"></div>
     <div class="arrow"></div>
 
-    <div class="train-number">车次</div>
+    <div class="train-number">{{trainNumber}}</div>
 
     <div class="departure-label">Departure</div>
     <div class="arrival-label">Arrive</div>
 
-    <div class="departure-time">XXXX年XX月XX日 XX:XX开</div>
-    <div class="seat-info">XX车XX#号</div>
+    <div class="departure-time">{{departureDate}} {{departureTime}}开</div>
+    <div class="seat-info">{{carNumber}}车{{seatNumber}}号</div>
 
     <div class="price-symbol">¥</div>
-    <div class="price-label">价格</div>
+    <div class="price-label">{{price}}</div>
     <div class="price-unit">元</div>
 
-    <div class="seat-type">座位席别</div>
+    <div class="seat-type">{{seatType}}</div>
 
     <div class="disclaimer">仅供收藏纪念不可用于报销</div>
 
-    <div class="name-label">姓名</div>
+    <div class="name-label">{{passengerName}}</div>
 
-    <div class="serial-number">120***************</div>
+    <div class="serial-number">{{idNumber}}</div>
 
     <div class="dotted-border"></div>
 

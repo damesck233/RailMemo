@@ -1,4 +1,14 @@
-import { TicketData } from '@/types/ticket';
+import { TicketData, TemplateConfig } from '@/types/ticket';
+
+// 可用的模板配置
+export const AVAILABLE_TEMPLATES: TemplateConfig[] = [
+  {
+    id: 'cr400bf-z',
+    name: 'CR400智动',
+    description: '现代化高铁车票设计，粉色主题配色',
+    fileName: 'CR400BF-Z/ticket_template.html'
+  }
+];
 
 // 模板中需要替换的字段映射
 const TEMPLATE_FIELDS = {
@@ -15,11 +25,16 @@ const TEMPLATE_FIELDS = {
 };
 
 // 获取模板HTML内容
-export async function getTemplateHTML(): Promise<string> {
+export async function getTemplateHTML(templateId: string = 'cr400bf-z'): Promise<string> {
   try {
-    const response = await fetch('/模板.html');
+    const template = AVAILABLE_TEMPLATES.find(t => t.id === templateId);
+    if (!template) {
+      throw new Error(`Template with id '${templateId}' not found`);
+    }
+
+    const response = await fetch(`/${template.fileName}`);
     if (!response.ok) {
-      throw new Error('Failed to fetch template');
+      throw new Error(`Failed to fetch template: ${template.fileName}`);
     }
     return await response.text();
   } catch (error) {
@@ -28,9 +43,32 @@ export async function getTemplateHTML(): Promise<string> {
   }
 }
 
+// 获取默认模板ID
+export function getDefaultTemplateId(): string {
+  return 'cr400bf-z';
+}
+
+// 获取模板选项列表
+export function getTemplateOptions() {
+  return AVAILABLE_TEMPLATES.map(template => ({
+    value: template.id,
+    label: template.name,
+    description: template.description
+  }));
+}
+
 // 处理模板替换
-export function processTemplate(templateHTML: string, data: TicketData): string {
+export function processTemplate(templateHTML: string, data: TicketData, templateId: string = 'cr400bf-z'): string {
   let processedHTML = templateHTML;
+
+  // 修复图片路径 - 将相对路径转换为正确的绝对路径
+  const template = AVAILABLE_TEMPLATES.find(t => t.id === templateId);
+  if (template && template.fileName.includes('/')) {
+    const templateDir = template.fileName.substring(0, template.fileName.lastIndexOf('/'));
+    // 替换相对路径的图片引用
+    processedHTML = processedHTML.replace(/url\('\.\//g, `url('/${templateDir}/`);
+    processedHTML = processedHTML.replace(/src="\.\/([^"]+)"/g, `src="/${templateDir}/$1"`);
+  }
 
   // 替换票号
   processedHTML = processedHTML.replace(
@@ -182,7 +220,7 @@ function maskIdNumber(idNumber: string): string {
 }
 
 // 生成默认数据
-export function getDefaultTicketData(): TicketData {
+export function getDefaultTicketData(): TicketData & { templateId: string } {
   return {
     ticketNumber: 'D010570',
     departureStation: '北京南',
@@ -195,6 +233,74 @@ export function getDefaultTicketData(): TicketData {
     price: '54.5',
     seatType: '二等座',
     passengerName: 'damesck',
-    idNumber: '150***************'
+    idNumber: '150***************',
+    templateId: getDefaultTemplateId()
   };
+}
+
+// 生成JSON模板
+export function generateJSONTemplate(): string {
+  const template = {
+    ticketNumber: "票号",
+    departureStation: "出发站",
+    arrivalStation: "到达站",
+    trainNumber: "车次",
+    departureTime: "发车时间(HH:MM)",
+    date: "日期(YYYY年MM月DD日)",
+    seatNumber: "座位号",
+    carNumber: "车厢号",
+    price: "票价",
+    seatType: "座位席别",
+    passengerName: "乘客姓名",
+    idNumber: "身份证号"
+  };
+  return JSON.stringify(template, null, 2);
+}
+
+// 验证JSON数据格式
+export function validateTicketJSON(jsonString: string): { isValid: boolean; data?: TicketData; error?: string } {
+  try {
+    const data = JSON.parse(jsonString);
+
+    // 检查必需字段
+    const requiredFields = [
+      'ticketNumber', 'departureStation', 'arrivalStation', 'trainNumber',
+      'departureTime', 'date', 'seatNumber', 'carNumber', 'price',
+      'seatType', 'passengerName', 'idNumber'
+    ];
+
+    for (const field of requiredFields) {
+      if (!(field in data)) {
+        return {
+          isValid: false,
+          error: `缺少必需字段: ${field}`
+        };
+      }
+    }
+
+    // 验证数据类型
+    for (const field of requiredFields) {
+      if (typeof data[field] !== 'string') {
+        return {
+          isValid: false,
+          error: `字段 ${field} 必须是字符串类型`
+        };
+      }
+    }
+
+    return {
+      isValid: true,
+      data: data as TicketData
+    };
+  } catch (error) {
+    return {
+      isValid: false,
+      error: 'JSON格式错误: ' + (error as Error).message
+    };
+  }
+}
+
+// 将票据数据转换为JSON字符串
+export function ticketDataToJSON(data: TicketData): string {
+  return JSON.stringify(data, null, 2);
 }

@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, Grid, Paper, Title, Text, Alert, Group, Stack, Center, Badge, Divider, Card, Tabs } from '@mantine/core';
-import { IconTrain, IconAlertTriangle, IconTicket, IconSettings, IconHistory, IconDownload } from '@tabler/icons-react';
+import { Container, Grid, Paper, Title, Text, Alert, Group, Stack, Center, Badge, Divider, Card, Tabs, Select } from '@mantine/core';
+import { IconTrain, IconAlertTriangle, IconTicket, IconSettings, IconHistory, IconDownload, IconPalette } from '@tabler/icons-react';
 import TicketForm from '@/components/TicketForm';
 import TicketPreview from '@/components/TicketPreview';
 import ActionButtons from '@/components/ActionButtons';
 import { FooterSocial } from '@/components/FooterSocial';
 import { TicketFormData } from '@/types/ticket';
-import { getDefaultTicketData } from '@/lib/templateProcessor';
+import { getDefaultTicketData, getTemplateOptions } from '@/lib/templateProcessor';
 
 export default function Home() {
   const [ticketData, setTicketData] = useState<TicketFormData>(getDefaultTicketData());
@@ -52,11 +52,16 @@ export default function Home() {
     setIsGenerated(true);
   };
 
+  const handleTemplateChange = (templateId: string) => {
+    const updatedData = { ...ticketData, templateId };
+    setTicketData(updatedData);
+  };
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
       {/* Header */}
       <FooterSocial />
-      
+
 
 
       {/* Main Content */}
@@ -92,17 +97,32 @@ export default function Home() {
               {/* 车票预览 */}
               <Card shadow="xs" padding="lg" radius="md" withBorder mb="lg">
                 <Group mb="md" justify="space-between">
-                  <Title order={4} c="dark.7">
-                    车票预览
-                  </Title>
+                  <Group gap="md">
+                    <Title order={4} c="dark.7">
+                      车票预览
+                    </Title>
+                    <Select
+                      placeholder="选择模板"
+                      data={getTemplateOptions()}
+                      value={ticketData.templateId}
+                      onChange={(value) => value && handleTemplateChange(value)}
+                      leftSection={<IconPalette size={14} />}
+                      allowDeselect={false}
+                      size="xs"
+                      w={150}
+                    />
+                  </Group>
                   <Badge variant="light" color={isGenerated ? "green" : "gray"}>
                     {isGenerated ? "已生成" : "未生成"}
                   </Badge>
                 </Group>
-                
+
                 <div style={{ minHeight: '200px' }}>
                   {isGenerated ? (
-                    <TicketPreview ticketData={ticketData} />
+                    <TicketPreview
+                      ticketData={ticketData}
+                      onTemplateChange={handleTemplateChange}
+                    />
                   ) : (
                     <Center style={{ minHeight: '200px' }}>
                       <Stack align="center" gap="md">
@@ -136,7 +156,7 @@ export default function Home() {
                     </Center>
                   )}
                 </div>
-                
+
                 {/* 候补列表 */}
                 <Divider my="lg" />
                 <Group mb="md" justify="space-between">
@@ -147,7 +167,7 @@ export default function Home() {
                     待处理
                   </Badge>
                 </Group>
-                
+
                 <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
                   {ticketQueue.length === 0 ? (
                     <Center style={{ minHeight: '120px' }}>
@@ -187,8 +207,8 @@ export default function Home() {
                                 {ticket.departureStation} → {ticket.arrivalStation}
                               </Text>
                               <Text size="xs" c="dimmed">
-                                 {ticket.trainNumber} | {ticket.date} {ticket.departureTime}
-                               </Text>
+                                {ticket.trainNumber} | {ticket.date} {ticket.departureTime}
+                              </Text>
                             </div>
                             <Group gap="xs">
                               <Text size="xs" c="blue" style={{ cursor: 'pointer' }} onClick={() => handlePreviewTicket(ticket)}>

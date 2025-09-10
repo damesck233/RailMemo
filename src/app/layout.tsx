@@ -8,6 +8,11 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: '车票生成器 - RailMemo',
   description: '在线生成车票，支持自定义信息、预览、打印和PDF导出',
+  icons: {
+    icon: '/logo.svg',
+    shortcut: '/logo.svg',
+    apple: '/logo.svg',
+  },
 }
 
 export default function RootLayout({
