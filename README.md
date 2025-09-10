@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./public/logo.svg" alt="RailMemo Logo" width="413" height="160">
+  <img src="https://nb-data.klpbbs.com/file/tc/2025/09/10/68c0fe1a281e6_1757478426.png" alt="RailMemo Logo" height="160">
 </div>
 
 # RailMemo - 火车票生成器
