@@ -2,6 +2,8 @@ export interface TicketData {
   ticketNumber: string;
   departureStation: string;
   arrivalStation: string;
+  departureStationEn: string;
+  arrivalStationEn: string;
   trainNumber: string;
   departureTime: string;
   date: string;
@@ -18,6 +20,8 @@ export interface TicketFormData {
   ticketNumber: string;
   departureStation: string;
   arrivalStation: string;
+  departureStationEn: string;
+  arrivalStationEn: string;
   trainNumber: string;
   departureTime: string;
   date: string;

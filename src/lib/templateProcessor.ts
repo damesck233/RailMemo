@@ -148,6 +148,27 @@ export function processTemplate(templateHTML: string, data: TicketData, template
     `<div class="serial-number">${maskedIdNumber}</div>`
   );
 
+  // 替换英文站名（根据字符长度调整位置）
+  const departureEnPositionStyle = getEnglishStationPositionStyle(data.departureStationEn, 'departure');
+  processedHTML = processedHTML.replace(
+    /<div class="departure-label">/,
+    `<div class="departure-label"${departureEnPositionStyle}>`
+  );
+  processedHTML = processedHTML.replace(
+    /<div class="departure-label"[^>]*>.*?<\/div>/,
+    `<div class="departure-label"${departureEnPositionStyle}>${data.departureStationEn}</div>`
+  );
+  
+  const arrivalEnPositionStyle = getEnglishStationPositionStyle(data.arrivalStationEn, 'arrival');
+  processedHTML = processedHTML.replace(
+    /<div class="arrival-label">/,
+    `<div class="arrival-label"${arrivalEnPositionStyle}>`
+  );
+  processedHTML = processedHTML.replace(
+    /<div class="arrival-label"[^>]*>.*?<\/div>/,
+    `<div class="arrival-label"${arrivalEnPositionStyle}>${data.arrivalStationEn}</div>`
+  );
+
   return processedHTML;
 }
 
@@ -206,6 +227,35 @@ function getStationPositionStyle(stationName: string, type: 'departure' | 'arriv
   }
 }
 
+// 根据英文站名字符长度获取位置调整样式
+function getEnglishStationPositionStyle(stationName: string, type: 'departure' | 'arrival'): string {
+  if (!stationName) return '';
+
+  const length = stationName.length;
+  let offset = 0;
+
+  // 只有当英文站名较长时才进行偏移调整
+  if (length >= 25) {
+    offset = 80; // 25个字符及以上，偏移80px
+  } else if (length >= 20) {
+    offset = 60; // 20个字符，偏移60px
+  } else if (length >= 15) {
+    offset = 40; // 15个字符，偏移40px
+  } else if (length >= 12) {
+    offset = 20; // 12个字符，偏移20px
+  }
+
+  // 短英文站名保持原有对齐方式，不进行偏移
+  if (offset === 0) return '';
+
+  // 出发站字符过多向左偏移，到达站字符过多向右偏移
+  if (type === 'departure') {
+    return ` style="transform: translateX(-${offset}px);"`;
+  } else {
+    return ` style="transform: translateX(${offset}px);"`;
+  }
+}
+
 // 身份证号脱敏处理
 function maskIdNumber(idNumber: string): string {
   if (!idNumber || idNumber.length < 6) {
@@ -225,6 +275,8 @@ export function getDefaultTicketData(): TicketData & { templateId: string } {
     ticketNumber: 'D010570',
     departureStation: '北京南',
     arrivalStation: '天津',
+    departureStationEn: 'Beijing South',
+    arrivalStationEn: 'Tianjin',
     trainNumber: 'C2241',
     departureTime: '11:44',
     date: '2024年06月22日',
@@ -244,6 +296,8 @@ export function generateJSONTemplate(): string {
     ticketNumber: "票号",
     departureStation: "出发站",
     arrivalStation: "到达站",
+    departureStationEn: "出发站英文",
+    arrivalStationEn: "到达站英文",
     trainNumber: "车次",
     departureTime: "发车时间(HH:MM)",
     date: "日期(YYYY年MM月DD日)",
@@ -264,7 +318,7 @@ export function validateTicketJSON(jsonString: string): { isValid: boolean; data
 
     // 检查必需字段
     const requiredFields = [
-      'ticketNumber', 'departureStation', 'arrivalStation', 'trainNumber',
+      'ticketNumber', 'departureStation', 'arrivalStation', 'departureStationEn', 'arrivalStationEn', 'trainNumber',
       'departureTime', 'date', 'seatNumber', 'carNumber', 'price',
       'seatType', 'passengerName', 'idNumber'
     ];

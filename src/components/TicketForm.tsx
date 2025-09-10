@@ -220,6 +220,29 @@ export default function TicketForm({ onDataChange, initialData }: TicketFormProp
             <Grid>
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <TextInput
+                  label="出发站英文"
+                  value={formData.departureStationEn}
+                  onChange={(e) => handleInputChange('departureStationEn', e.target.value)}
+                  placeholder="如：Beijing South"
+                  radius="md"
+                  size="sm"
+                />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <TextInput
+                  label="到达站英文"
+                  value={formData.arrivalStationEn}
+                  onChange={(e) => handleInputChange('arrivalStationEn', e.target.value)}
+                  placeholder="如：Shanghai Hongqiao"
+                  radius="md"
+                  size="sm"
+                />
+              </Grid.Col>
+            </Grid>
+
+            <Grid>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <TextInput
                   label="日期"
                   type="date"
                   value={dateInputValue}

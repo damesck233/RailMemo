@@ -121,22 +121,28 @@
 
     .departure-label {
       position: absolute;
-      left: 310px;
+      left: 180px;
       top: 310px;
       font-size: 50px;
       line-height: 60px;
       color: #000000;
       font-family: 'Alibaba PuHuiTi 3 55 Regular', Arial, sans-serif;
+      text-align: center;
+      width: 500px;
+      white-space: nowrap;
     }
 
     .arrival-label {
       position: absolute;
-      left: 1310px;
+      right: 380px;
       top: 310px;
       font-size: 50px;
       line-height: 60px;
       color: #000000;
       font-family: 'Alibaba PuHuiTi 3 55 Regular', Arial, sans-serif;
+      text-align: right;
+      width: 400px;
+      white-space: nowrap;
     }
 
     .departure-time {
@@ -324,8 +330,8 @@
 
     <div class="train-number">{{trainNumber}}</div>
 
-    <div class="departure-label">Departure</div>
-    <div class="arrival-label">Arrive</div>
+    <div class="departure-label">{{departureStationEn}}</div>
+    <div class="arrival-label">{{arrivalStationEn}}</div>
 
     <div class="departure-time">{{departureDate}} {{departureTime}}开</div>
     <div class="seat-info">{{carNumber}}车{{seatNumber}}号</div>
