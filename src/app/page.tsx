@@ -8,7 +8,7 @@ import TicketPreview from '@/components/TicketPreview';
 import ActionButtons from '@/components/ActionButtons';
 import { FooterSocial } from '@/components/FooterSocial';
 import { TicketFormData } from '@/types/ticket';
-import { getDefaultTicketData, getTemplateOptions } from '@/lib/templateProcessor';
+import { getDefaultTicketData, getTemplateOptions, AVAILABLE_TEMPLATES } from '@/lib/templateProcessor';
 
 export default function Home() {
   const [ticketData, setTicketData] = useState<TicketFormData>(getDefaultTicketData());
@@ -203,9 +203,14 @@ export default function Home() {
                         <Paper key={ticket.id} p="sm" withBorder radius="sm">
                           <Group justify="space-between">
                             <div style={{ flex: 1 }}>
-                              <Text size="sm" fw={500}>
-                                {ticket.departureStation} → {ticket.arrivalStation}
-                              </Text>
+                              <Group gap="xs" align="center">
+                                <Text size="sm" fw={500}>
+                                  {ticket.departureStation} → {ticket.arrivalStation}
+                                </Text>
+                                <Badge size="xs" variant="light" color="blue">
+                                  {AVAILABLE_TEMPLATES.find(t => t.id === ticket.templateId)?.name || 'CR400智动'}
+                                </Badge>
+                              </Group>
                               <Text size="xs" c="dimmed">
                                 {ticket.trainNumber} | {ticket.date} {ticket.departureTime}
                               </Text>

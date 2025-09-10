@@ -43,12 +43,12 @@ export default function ActionButtons({ onGenerate, ticketQueue }: ActionButtons
         if (ticketQueue.length === 1) {
           // 单张车票直接下载PNG
           const ticket = ticketQueue[0];
-          const processedHTML = processTemplate(templateHTML, ticket, ticket.templateId);
-          // 如果票据有不同的模板，需要重新获取模板
-          if (ticket.templateId && ticket.templateId !== ticketQueue[0].templateId) {
-            const ticketTemplateHTML = await getTemplateHTML(ticket.templateId);
-            tempContainer.innerHTML = processTemplate(ticketTemplateHTML, ticket, ticket.templateId);
+          // 如果票据有指定的模板，使用对应的模板
+          let currentTemplateHTML = templateHTML;
+          if (ticket.templateId && ticket.templateId !== 'cr400bf-z') {
+            currentTemplateHTML = await getTemplateHTML(ticket.templateId);
           }
+          const processedHTML = processTemplate(currentTemplateHTML, ticket, ticket.templateId);
           tempContainer.innerHTML = processedHTML;
 
           // 等待DOM渲染完成
@@ -85,7 +85,12 @@ export default function ActionButtons({ onGenerate, ticketQueue }: ActionButtons
 
           for (let i = 0; i < ticketQueue.length; i++) {
             const ticket = ticketQueue[i];
-            const processedHTML = processTemplate(templateHTML, ticket, ticket.templateId);
+            // 如果票据有不同的模板，需要重新获取模板
+            let currentTemplateHTML = templateHTML;
+            if (ticket.templateId && ticket.templateId !== ticketQueue[0].templateId) {
+              currentTemplateHTML = await getTemplateHTML(ticket.templateId);
+            }
+            const processedHTML = processTemplate(currentTemplateHTML, ticket, ticket.templateId);
             tempContainer.innerHTML = processedHTML;
 
             // 等待DOM渲染完成

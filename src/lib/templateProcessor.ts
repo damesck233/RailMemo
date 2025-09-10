@@ -7,6 +7,12 @@ export const AVAILABLE_TEMPLATES: TemplateConfig[] = [
     name: 'CR400智动',
     description: '现代化高铁车票设计，粉色主题配色',
     fileName: 'CR400BF-Z/ticket_template.html'
+  },
+  {
+    id: 'vastse_fourth_anniversary',
+    name: '瀚海工艺四周年',
+    description: '瀚海工艺四周年，设计感十足',
+    fileName: 'vastsea_fourth_anniversary/ticket_template.html'
   }
 ];
 
@@ -158,7 +164,7 @@ export function processTemplate(templateHTML: string, data: TicketData, template
     /<div class="departure-label"[^>]*>.*?<\/div>/,
     `<div class="departure-label"${departureEnPositionStyle}>${data.departureStationEn}</div>`
   );
-  
+
   const arrivalEnPositionStyle = getEnglishStationPositionStyle(data.arrivalStationEn, 'arrival');
   processedHTML = processedHTML.replace(
     /<div class="arrival-label">/,
