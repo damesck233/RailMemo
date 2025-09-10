@@ -300,12 +300,27 @@ export default function TicketForm({ onDataChange, initialData }: TicketFormProp
                   value={formData.seatType}
                   onChange={(value) => handleInputChange('seatType', value || '')}
                   data={[
-                    { value: '二等座', label: '二等座' },
-                    { value: '一等座', label: '一等座' },
+                    // 高铁/动车
                     { value: '商务座', label: '商务座' },
-                    { value: '硬座', label: '硬座' },
+                    { value: '特等座', label: '特等座' },
+                    { value: '一等座', label: '一等座' },
+                    { value: '二等座', label: '二等座' },
+                    { value: '一等卧', label: '一等卧' },
+                    { value: '二等卧', label: '二等卧' },
+                    { value: '动卧', label: '动卧' },
+
+                    // 普速列车
+                    { value: '高级软卧', label: '高级软卧' },
+                    { value: '软卧', label: '软卧' },
                     { value: '硬卧', label: '硬卧' },
-                    { value: '软卧', label: '软卧' }
+                    { value: '软座', label: '软座' },
+                    { value: '硬座', label: '硬座' },
+
+                    // 其他
+                    { value: '无座', label: '无座' },
+                    { value: '包厢', label: '包厢' },
+                    { value: '篷车', label: '篷车' },
+                    { value: '其他', label: '其他' },
                   ]}
                   radius="md"
                   size="sm"
