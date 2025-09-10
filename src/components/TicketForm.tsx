@@ -187,7 +187,7 @@ export default function TicketForm({ onDataChange, initialData }: TicketFormProp
                   label="车次"
                   value={formData.trainNumber}
                   onChange={(e) => handleInputChange('trainNumber', e.target.value)}
-                  placeholder="如：G1"
+                  placeholder="如：C2135"
                   radius="md"
                   size="sm"
                 />
@@ -210,7 +210,7 @@ export default function TicketForm({ onDataChange, initialData }: TicketFormProp
                   label="到达站"
                   value={formData.arrivalStation}
                   onChange={(e) => handleInputChange('arrivalStation', e.target.value)}
-                  placeholder="如：上海虹桥"
+                  placeholder="如：天津西"
                   radius="md"
                   size="sm"
                 />
@@ -233,7 +233,7 @@ export default function TicketForm({ onDataChange, initialData }: TicketFormProp
                   label="到达站英文"
                   value={formData.arrivalStationEn}
                   onChange={(e) => handleInputChange('arrivalStationEn', e.target.value)}
-                  placeholder="如：Shanghai Hongqiao"
+                  placeholder="如：Tianjin West"
                   radius="md"
                   size="sm"
                 />
